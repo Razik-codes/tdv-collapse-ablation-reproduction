@@ -1,3 +1,40 @@
+# TDV reproduction — the collapse ablation (Table 4)
+
+[![Open in molab](https://marimo.io/molab-shield.svg)](https://molab.marimo.io/github/Razik-codes/tdv-4570dd53/blob/main/claim_tutorial.py)
+
+> **This fork reproduces one illustrative claim from the TDV paper and ships it as an interactive [marimo](https://marimo.io) tutorial.** The original project README follows [below](#-you-dont-need-strong-assumptions-temporal-difference-visual-representation-learning).
+
+**Claim (paper Table 4).** TDV's two load-bearing components — the **motion encoder** and the **MSE next-frame-prediction loss** — are each *critical*: remove either and training collapses (ImageNet-KNN Top-5 falls from **17.05%** to near-chance **1.87% / 1.58%**).
+
+**What we did.** Downscaled the setup to fit a single **RTX 3050 Ti (4 GB)**: ViT-S/14 from scratch, batch 1, 600 steps, on synthetic **low-rank-motion** clips (a textured disc on a static background — faithful to TDV's assumption). With no ImageNet, we swap the KNN collapse-detector for a direct read on TDV's own objective — the **next-frame prediction gain over the identity baseline** (`ẑ_{t+1}=z_t+Δz_t` vs `z_t`). Every arm runs the *identical* command; each differs by exactly one committed knob.
+
+**Verdict: ✅ reproduced (qualitatively).** Only the full recipe learns to predict the next frame; removing either component breaks it — the same ordering as Table 4, with a large margin:
+
+| Arm | Paper (ImageNet KNN Top-5) | This reproduction (prediction gain vs identity) |
+|---|---:|---:|
+| **Full TDV** | **17.05%** ✅ | **+42.6%** ✅ |
+| − Motion encoder | 1.87% ❌ | **0.0%** ❌ |
+| − MSE loss | 1.58% ❌ | **−447%** ❌ |
+
+The paper's exact KNN numbers are **not** reproducible here (no ImageNet / no full-scale SSv2 pretraining) and are not claimed. **Compute:** the 3 reproduction runs ≈ 21 min total on one 4 GB laptop GPU.
+
+- 📓 **Interactive tutorial:** [open in molab](https://molab.marimo.io/github/Razik-codes/tdv-4570dd53/blob/main/claim_tutorial.py) · source [`claim_tutorial.py`](claim_tutorial.py) — frozen results render instantly; an optional GPU lab (DINOv2 ViT-S Δz sweep, behind a run button) is designed for molab's RTX PRO 6000.
+- 📄 **Full write-up:** [`reports/collapse-ablation/report.md`](reports/collapse-ablation/report.md) — method, exact substitutions, figures, lineage, and honest limitations.
+
+### Experiment log
+
+Every experiment runs the same fixed command over different committed code (branch links point at the exact runnable config). Round 2 uses faithful low-rank-motion data; round 1 (`testsrc2`) is kept as the negative control that motivated it.
+
+| Branch / experiment | Purpose / change vs control | Exact run command | Outcome | Compute |
+|---|---|---|---|---|
+| `main` | Publication surface (README, notebook, report) | *Not run as an experiment (publication surface)* | — | — |
+| [`…control-faithful-low-rank-motion-data`](https://github.com/Razik-codes/tdv-4570dd53/tree/experiment/full-tdv-control-faithful-low-rank-motion-data-r) | **Full TDV control** (round 2, faithful data) | `bash job_scripts/pretrain_tdv_local_smoketest.sh` | **+42.6%** gain — healthy ✅ | RTX 3050 Ti, ~7 min |
+| [`…ablation-remove-motion-encoder-faithful-data`](https://github.com/Razik-codes/tdv-4570dd53/tree/experiment/ablation-remove-motion-encoder-faithful-data-rou) | `+ --remove_motion_encoder` | `bash job_scripts/pretrain_tdv_local_smoketest.sh` | **0.0%** gain — fails ❌ | RTX 3050 Ti, ~7 min |
+| [`…ablation-remove-mse-loss-faithful-data-round-2`](https://github.com/Razik-codes/tdv-4570dd53/tree/experiment/ablation-remove-mse-loss-faithful-data-round-2) | remove `--use_mse_loss` | `bash job_scripts/pretrain_tdv_local_smoketest.sh` | **−447%** gain — collapse ❌ | RTX 3050 Ti, ~7 min |
+| [`…control-collapse-metrics-logged-table-4`](https://github.com/Razik-codes/tdv-4570dd53/tree/experiment/full-tdv-control-collapse-metrics-logged-table-4) | Round-1 control: adds `--log_var_covar` + `--print_metrics_to_stdout`, 600-step schedule (on `testsrc2` data) | `bash job_scripts/pretrain_tdv_local_smoketest.sh` | Confounded on `testsrc2` → motivated faithful data (lineage) | RTX 3050 Ti, ~8 min |
+
+---
+
 # 🎬 You Don't Need Strong Assumptions: Temporal Difference Visual Representation Learning
 
 📚 [Paper](https://temporal-difference-vision.github.io/static/pdfs/tdv.pdf) | 🌐 [Website](https://temporal-difference-vision.github.io/) | 🧾 [Bibtex](#citation)

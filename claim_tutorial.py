@@ -295,13 +295,13 @@ def _(mo):
 
         | What | Branch (runnable code + fixed config) |
         |---|---|
-        | Full TDV control | [`…control-faithful-low-rank-motion-data`](https://github.com/Razik-codes/tdv-4570dd53/tree/experiment/full-tdv-control-faithful-low-rank-motion-data-r) |
-        | − Motion encoder | [`…ablation-remove-motion-encoder-faithful-data`](https://github.com/Razik-codes/tdv-4570dd53/tree/experiment/ablation-remove-motion-encoder-faithful-data-rou) |
-        | − MSE loss | [`…ablation-remove-mse-loss-faithful-data-round-2`](https://github.com/Razik-codes/tdv-4570dd53/tree/experiment/ablation-remove-mse-loss-faithful-data-round-2) |
+        | Full TDV control | [`…control-faithful-low-rank-motion-data`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/full-tdv-control-faithful-low-rank-motion-data-r) |
+        | − Motion encoder | [`…ablation-remove-motion-encoder-faithful-data`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/ablation-remove-motion-encoder-faithful-data-rou) |
+        | − MSE loss | [`…ablation-remove-mse-loss-faithful-data-round-2`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/ablation-remove-mse-loss-faithful-data-round-2) |
 
-        Full write-up: [reports/collapse-ablation/report.md](https://github.com/Razik-codes/tdv-4570dd53/blob/main/reports/collapse-ablation/report.md).
+        Full write-up: [reports/collapse-ablation/report.md](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/blob/main/reports/collapse-ablation/report.md).
         The collapse-metric plumbing (`--log_var_covar`, `--print_metrics_to_stdout`) lives on
-        the [round-1 control branch](https://github.com/Razik-codes/tdv-4570dd53/tree/experiment/full-tdv-control-collapse-metrics-logged-table-4).
+        the [round-1 control branch](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/full-tdv-control-collapse-metrics-logged-table-4).
         """
     )
     return

@@ -6,8 +6,8 @@ title: "TDV Collapse Ablation: A Downscaled Reproduction Artifact"
 type: software
 authors:
   - family-names: Razik
-repository-code: "https://github.com/Razik-codes/tdv-4570dd53"
-url: "https://github.com/Razik-codes/tdv-4570dd53"
+repository-code: "https://github.com/Razik-codes/tdv-collapse-ablation-reproduction"
+url: "https://github.com/Razik-codes/tdv-collapse-ablation-reproduction"
 license: Apache-2.0
 abstract: >-
   An interactive, single-GPU, mechanism-level reproduction of the collapse

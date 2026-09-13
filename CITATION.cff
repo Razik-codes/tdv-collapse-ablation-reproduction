@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: >-
+  If you use this reproduction artifact, please cite it using the metadata
+  below and cite the original TDV paper when discussing the method.
+title: "TDV Collapse Ablation: A Downscaled Reproduction Artifact"
+type: software
+authors:
+  - family-names: Razik
+repository-code: "https://github.com/Razik-codes/tdv-4570dd53"
+url: "https://github.com/Razik-codes/tdv-4570dd53"
+license: Apache-2.0
+abstract: >-
+  An interactive, single-GPU, mechanism-level reproduction of the collapse
+  ablation in Table 4 of You Don't Need Strong Assumptions: Visual
+  Representation Learning via Temporal Differences. The artifact includes
+  frozen results, experimental lineage, compute accounting, and limitations.
+keywords:
+  - computer vision
+  - self-supervised learning
+  - video representation learning
+  - reproducibility
+  - ablation study
+references:
+  - type: article
+    title: "You Don't Need Strong Assumptions: Visual Representation Learning via Temporal Differences"
+    authors:
+      - family-names: Daithankar
+        given-names: Ninad
+      - family-names: Gladstone
+        given-names: Alexi
+      - family-names: LeCun
+        given-names: Yann
+      - family-names: Ji
+        given-names: Heng
+    year: 2026
+    identifiers:
+      - type: url
+        value: "https://arxiv.org/abs/2606.15956"
+        description: arXiv preprint

@@ -1,6 +1,6 @@
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["marimo", "numpy", "matplotlib"]
+# dependencies = ["marimo==0.23.15", "numpy==2.1.1", "matplotlib==3.9.2"]
 # ///
 #
 # Tutorial reproduction of the collapse ablation (Table 4) from

@@ -1,12 +1,29 @@
 # TDV reproduction — the collapse ablation (Table 4)
 
 [![Open in molab](https://marimo.io/molab-shield.svg)](https://molab.marimo.io/github/Razik-codes/tdv-4570dd53/blob/main/claim_tutorial.py)
+[![Quality checks](https://github.com/Razik-codes/tdv-4570dd53/actions/workflows/quality.yml/badge.svg)](https://github.com/Razik-codes/tdv-4570dd53/actions/workflows/quality.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg)](claim_tutorial.py)
 
-> **This fork reproduces one illustrative claim from the TDV paper and ships it as an interactive [marimo](https://marimo.io) tutorial.** The original project README follows [below](#-you-dont-need-strong-assumptions-temporal-difference-visual-representation-learning).
+> **This is my reproduction study of one claim from the TDV paper, packaged as an interactive [marimo](https://marimo.io) tutorial.** The original project README follows [below](#-you-dont-need-strong-assumptions-temporal-difference-visual-representation-learning).
+
+## Research note
+
+I started from the TDV codebase and investigated whether the collapse reported in Table 4 could be observed on a single 4 GB GPU. I first tried a `testsrc2` synthetic source, then replaced it with clips containing a moving textured disc over a mostly static background after finding that the original source did not provide the low-rank motion signal assumed by TDV. I ran the full model and two ablations with the same short training command, changing one component at a time.
+
+Because I did not have the resources to reproduce full SSv2 pretraining and the ImageNet KNN evaluation, I used next-frame prediction gain over the identity baseline as a smaller diagnostic. The result below is therefore a **qualitative reproduction of the mechanism**, not a claim that I recovered the paper's full-scale numbers. The [full report](reports/collapse-ablation/report.md) records the substitutions, negative control, compute, and limitations.
+
+The original TDV model and evaluation stack are documented below this study. See [third-party and source provenance](THIRD_PARTY_NOTICES.md) for the relationship between the original code and my additions.
+
+To inspect the tutorial locally with its declared Python 3.11+ dependencies, install [uv](https://docs.astral.sh/uv/) and run:
+
+```bash
+uv run claim_tutorial.py
+```
 
 **Claim (paper Table 4).** TDV's two load-bearing components — the **motion encoder** and the **MSE next-frame-prediction loss** — are each *critical*: remove either and training collapses (ImageNet-KNN Top-5 falls from **17.05%** to near-chance **1.87% / 1.58%**).
 
-**What we did.** Downscaled the setup to fit a single **RTX 3050 Ti (4 GB)**: ViT-S/14 from scratch, batch 1, 600 steps, on synthetic **low-rank-motion** clips (a textured disc on a static background — faithful to TDV's assumption). With no ImageNet, we swap the KNN collapse-detector for a direct read on TDV's own objective — the **next-frame prediction gain over the identity baseline** (`ẑ_{t+1}=z_t+Δz_t` vs `z_t`). Every arm runs the *identical* command; each differs by exactly one committed knob.
+**What I ran.** I downscaled the setup to fit a single **RTX 3050 Ti (4 GB)**: ViT-S/14 from scratch, batch 1, 600 steps, on synthetic **low-rank-motion** clips (a textured disc on a static background — faithful to TDV's assumption). Without ImageNet, I used a direct read on TDV's own objective instead of the KNN collapse detector — the **next-frame prediction gain over the identity baseline** (`ẑ_{t+1}=z_t+Δz_t` vs `z_t`). Every arm used the *identical* command; each differed by exactly one committed knob.
 
 **Verdict: ✅ reproduced (qualitatively).** Only the full recipe learns to predict the next frame; removing either component breaks it — the same ordering as Table 4, with a large margin:
 
@@ -190,6 +207,8 @@ All hyperparameters live in `hparams/args.py`. Generally you should not need to 
 
 ```
 tdv/
+├── claim_tutorial.py                      # interactive collapse-ablation reproduction
+├── reports/collapse-ablation/             # methods, results, figures, and limitations
 ├── train_model.py                          # entry point — parses hparams, sets up DDP, calls trainer
 ├── base_model_trainer.py                   # PyTorch Lightning module — training loop, optimizer, logging
 ├── hparams/args.py                         # all hyperparameters
@@ -215,6 +234,8 @@ tdv/
 │       ├── flow_eval.slurm                 # optical flow eval (Sintel / FlyingThings / Chairs)
 │       └── stereo_depth_eval.slurm         # stereo depth eval (SceneFlow)
 ├── requirements.txt
+├── CITATION.cff                            # citation metadata for this reproduction artifact
+├── THIRD_PARTY_NOTICES.md                  # source and license provenance
 └── slurm_executor.sh
 ```
 

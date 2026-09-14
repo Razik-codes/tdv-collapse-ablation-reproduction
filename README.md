@@ -1,13 +1,18 @@
-# TDV reproduction — the collapse ablation (Table 4)
+# TDV collapse ablation — independent reproduction
 
 [![Open in molab](https://marimo.io/molab-shield.svg)](https://molab.marimo.io/github/Razik-codes/tdv-collapse-ablation-reproduction/blob/main/claim_tutorial.py)
 [![Quality checks](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/actions/workflows/quality.yml/badge.svg)](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/actions/workflows/quality.yml)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+[![Licensing: see notices](https://img.shields.io/badge/Licensing-see%20notices-6b7280.svg)](THIRD_PARTY_NOTICES.md)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg)](claim_tutorial.py)
 
-> **This is my reproduction study of one claim from the TDV paper, packaged as an interactive [marimo](https://marimo.io) tutorial.** The original project README follows [below](#-you-dont-need-strong-assumptions-temporal-difference-visual-representation-learning).
+> **Independent research artifact by [Razik-codes](https://github.com/Razik-codes).** This project is not authored by, affiliated with, or endorsed by the TDV paper authors. It studies one TDV claim at reduced scale and cites the original work throughout.
+
+## My contribution
+
+I designed the low-rank-motion synthetic proxy, implemented the downscaled control and two ablations, ran the experiments on a 4 GB GPU, built the interactive tutorial, and wrote the analysis and limitations. The vendored TDV training and evaluation stack remains upstream work; see [CONTRIBUTIONS.md](CONTRIBUTIONS.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Research note
+
 
 I started from the TDV codebase and investigated whether the collapse reported in Table 4 could be observed on a single 4 GB GPU. I first tried a `testsrc2` synthetic source, then replaced it with clips containing a moving textured disc over a mostly static background after finding that the original source did not provide the low-rank motion signal assumed by TDV. I ran the full model and two ablations with the same short training command, changing one component at a time.
 
@@ -38,23 +43,39 @@ The paper's exact KNN numbers are **not** reproducible here (no ImageNet / no fu
 - 📓 **Interactive tutorial:** [open in molab](https://molab.marimo.io/github/Razik-codes/tdv-collapse-ablation-reproduction/blob/main/claim_tutorial.py) · source [`claim_tutorial.py`](claim_tutorial.py) — frozen results render instantly; an optional GPU lab (DINOv2 ViT-S Δz sweep, behind a run button) is designed for molab's RTX PRO 6000.
 - 📄 **Full write-up:** [`reports/collapse-ablation/report.md`](reports/collapse-ablation/report.md) — method, exact substitutions, figures, lineage, and honest limitations.
 
+### Re-run the reproduction
+
+Create the Python 3.11 environment described in [Setup](#setup), ensure `ffmpeg` is available, then run each arm from the repository root. `PYTHON_BIN` may point to any configured interpreter; generated videos are written to the ignored `smoke_data/` directory.
+
+```bash
+PYTHON_BIN=python TDV_ARM=full bash job_scripts/pretrain_tdv_local_smoketest.sh
+PYTHON_BIN=python TDV_ARM=no-motion bash job_scripts/pretrain_tdv_local_smoketest.sh
+PYTHON_BIN=python TDV_ARM=no-mse bash job_scripts/pretrain_tdv_local_smoketest.sh
+```
+
+These commands reproduce the downscaled mechanism-level study, not the paper-scale SSv2/ImageNet evaluation.
+
 ### Experiment log
 
-Every experiment runs the same fixed command over different committed code (branch links point at the exact runnable config). Round 2 uses faithful low-rank-motion data; round 1 (`testsrc2`) is kept as the negative control that motivated it.
+Every arm uses the same public harness; `TDV_ARM` selects the one controlled ablation. The public harness consolidates the three recorded configurations behind a single explicit selector. Round 2 uses faithful low-rank-motion data; round 1 (`testsrc2`) is kept as the negative control that motivated it.
 
 | Branch / experiment | Purpose / change vs control | Exact run command | Outcome | Compute |
 |---|---|---|---|---|
-| `main` | Publication surface (README, notebook, report) | *Not run as an experiment (publication surface)* | — | — |
-| [`…control-faithful-low-rank-motion-data`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/full-tdv-control-faithful-low-rank-motion-data-r) | **Full TDV control** (round 2, faithful data) | `bash job_scripts/pretrain_tdv_local_smoketest.sh` | **+42.6%** gain — healthy ✅ | RTX 3050 Ti, ~7 min |
-| [`…ablation-remove-motion-encoder-faithful-data`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/ablation-remove-motion-encoder-faithful-data-rou) | `+ --remove_motion_encoder` | `bash job_scripts/pretrain_tdv_local_smoketest.sh` | **0.0%** gain — fails ❌ | RTX 3050 Ti, ~7 min |
-| [`…ablation-remove-mse-loss-faithful-data-round-2`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/ablation-remove-mse-loss-faithful-data-round-2) | remove `--use_mse_loss` | `bash job_scripts/pretrain_tdv_local_smoketest.sh` | **−447%** gain — collapse ❌ | RTX 3050 Ti, ~7 min |
-| [`…control-collapse-metrics-logged-table-4`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/full-tdv-control-collapse-metrics-logged-table-4) | Round-1 control: adds `--log_var_covar` + `--print_metrics_to_stdout`, 600-step schedule (on `testsrc2` data) | `bash job_scripts/pretrain_tdv_local_smoketest.sh` | Confounded on `testsrc2` → motivated faithful data (lineage) | RTX 3050 Ti, ~8 min |
+| `main` | Public three-arm reproduction harness | `TDV_ARM={full,no-motion,no-mse} bash job_scripts/pretrain_tdv_local_smoketest.sh` | reruns the downscaled arms | 1× 4 GB GPU |
+| Full TDV control | **Full TDV control** (round 2, faithful data) | `TDV_ARM=full bash job_scripts/pretrain_tdv_local_smoketest.sh` | **+42.6%** gain — healthy ✅ | RTX 3050 Ti, ~7 min |
+| − Motion encoder | `+ --remove_motion_encoder` | `TDV_ARM=no-motion bash job_scripts/pretrain_tdv_local_smoketest.sh` | **0.0%** gain — fails ❌ | RTX 3050 Ti, ~7 min |
+| − MSE loss | remove `--use_mse_loss` | `TDV_ARM=no-mse bash job_scripts/pretrain_tdv_local_smoketest.sh` | **−447%** gain — collapse ❌ | RTX 3050 Ti, ~7 min |
+| Round-1 negative control | `testsrc2` data with collapse metrics | `TDV_ARM=full bash job_scripts/pretrain_tdv_local_smoketest.sh` | Confounded → motivated faithful data | RTX 3050 Ti, ~8 min |
 
 ---
 
-# 🎬 You Don't Need Strong Assumptions: Temporal Difference Visual Representation Learning
+# Upstream TDV reference code
 
-📚 [Paper](https://temporal-difference-vision.github.io/static/pdfs/tdv.pdf) | 🌐 [Website](https://temporal-difference-vision.github.io/) | 🧾 [Bibtex](#citation)
+> The documentation below describes the vendored upstream TDV project and paper for reference. It is not a claim that this artifact was authored by the TDV authors or that it reproduces their full-scale benchmark results.
+
+## You Don't Need Strong Assumptions: Temporal Difference Visual Representation Learning
+
+📚 [Paper](https://temporal-difference-vision.github.io/static/pdfs/tdv.pdf) | 🌐 [Website](https://temporal-difference-vision.github.io/) | 🧾 [Bibtex](#citations)
 
 **Ninad Daithankar\*, Alexi Gladstone\*, Yann LeCun, Heng Ji** &nbsp;(\*Equal Contribution)  
 University of Illinois Urbana-Champaign &nbsp;·&nbsp; New York University
@@ -239,9 +260,22 @@ tdv/
 └── slurm_executor.sh
 ```
 
-## Citation
+## Citations
 
-If you find this repo useful, please consider giving a star ⭐ and a citation 🙃. If you have any questions, feel free to post them on github issues, hugging face daily papers, or email me (ninaddaithankar@gmail.com).
+### This artifact
+
+Please cite the independent reproduction artifact using [CITATION.cff](CITATION.cff):
+
+```bibtex
+@software{razik_2026_tdv_collapse_ablation,
+  author = {Razik-codes},
+  title = {TDV Collapse Ablation: A Downscaled Reproduction Artifact},
+  year = {2026},
+  url = {https://github.com/Razik-codes/tdv-collapse-ablation-reproduction}
+}
+```
+
+### Original TDV paper
 
 ```bibtex
 @misc{daithankar2026dontneedstrongassumptions,

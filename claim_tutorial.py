@@ -40,7 +40,7 @@ def _(mo):
         makes TDV's "weak assumption" actually do work, so it is the single clearest
         window into *why the method works*.
 
-        > This page shows **frozen results** from real runs launched through `experiment`.
+        > This page shows **frozen results** from recorded reproduction runs.
         > Nothing below recomputes the reproduction — scroll freely. The only live
         > computation is the **optional GPU lab** at the very end, behind a button.
         """
@@ -287,21 +287,18 @@ def _(mo):
         separate downstream decoders (optical-flow / segmentation / stereo) for the *headline*
         Table 2/3 numbers, which this tutorial does not attempt.
 
-        ### Runnable provenance
+        ### Reproducibility
 
-        Every result above comes from a pushed experiment branch; each runs the **identical**
-        fixed command `bash job_scripts/pretrain_tdv_local_smoketest.sh` and differs only in
-        committed code. The reproduction uses the *round-2 (faithful-data)* arms:
+        The three recorded arms are exposed by the public harness:
 
-        | What | Branch (runnable code + fixed config) |
+        | Arm | Command selector |
         |---|---|
-        | Full TDV control | [`…control-faithful-low-rank-motion-data`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/full-tdv-control-faithful-low-rank-motion-data-r) |
-        | − Motion encoder | [`…ablation-remove-motion-encoder-faithful-data`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/ablation-remove-motion-encoder-faithful-data-rou) |
-        | − MSE loss | [`…ablation-remove-mse-loss-faithful-data-round-2`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/ablation-remove-mse-loss-faithful-data-round-2) |
+        | Full TDV control | `TDV_ARM=full` |
+        | − Motion encoder | `TDV_ARM=no-motion` |
+        | − MSE loss | `TDV_ARM=no-mse` |
 
-        Full write-up: [reports/collapse-ablation/report.md](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/blob/main/reports/collapse-ablation/report.md).
-        The collapse-metric plumbing (`--log_var_covar`, `--print_metrics_to_stdout`) lives on
-        the [round-1 control branch](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/full-tdv-control-collapse-metrics-logged-table-4).
+        Run `bash job_scripts/pretrain_tdv_local_smoketest.sh` with the selected `TDV_ARM` value.
+        Full methods, the round-1 negative control, and limitations are in [reports/collapse-ablation/report.md](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/blob/main/reports/collapse-ablation/report.md).
         """
     )
     return
@@ -373,7 +370,7 @@ def _():
 
 @app.cell
 def _(json):
-    # ---- FROZEN reproduction results (round-2 faithful-data arms, from experiment run logs) ----
+    # ---- FROZEN reproduction results (round-2 faithful-data arms, from recorded run logs) ----
     _FROZEN_JSON = r"""{"control":{"traj":{"step":[0,24,48,72,84,108,132,156,180,204,228,240,264,288,312,336,360,372,396,420,444,468,492,516,528,552,576,599],"gain_pct":[-291.86,39.6,45.31,48.6,47.51,49.26,58.69,57.86,54.64,54.48,50.68,51.18,46.62,56.88,43.61,52.49,44.16,61.51,52.52,50.66,55.9,47.11,45.33,49.58,39.93,36.48,38.91,34.92],"l1_loss":[0.50108,0.22367,0.18185,0.161,0.15542,0.1277,0.10279,0.10493,0.11042,0.10503,0.10046,0.10714,0.09774,0.07342,0.09597,0.07778,0.0835,0.04981,0.06858,0.06556,0.04501,0.05625,0.0703,0.04777,0.07096,0.06512,0.06545,0.06075],"baseline_l1_loss":[0.12787,0.37029,0.33248,0.31325,0.2961,0.25169,0.24881,0.249,0.24344,0.23073,0.20371,0.21947,0.18309,0.17026,0.1702,0.16369,0.14954,0.1294,0.14444,0.13288,0.10207,0.10635,0.12859,0.09476,0.11811,0.10252,0.10714,0.09334],"variance":[0.64621,0.38881,0.40132,0.30489,0.35857,0.36607,0.34656,0.38593,0.36466,0.29443,0.34426,0.32205,0.42737,0.36376,0.34896,0.40479,0.35336,0.23942,0.33056,0.33661,0.28761,0.35137,0.35726,0.22605,0.34453,0.31319,0.3087,0.27581],"teacher_variance":[0.64997,0.55236,0.51795,0.38328,0.48784,0.46976,0.37069,0.42681,0.40294,0.31123,0.38263,0.33753,0.45338,0.40307,0.39347,0.41483,0.37668,0.25136,0.35421,0.36753,0.30102,0.37532,0.38155,0.23933,0.3692,0.33206,0.3248,0.29063],"dino_entropy":[6.80643,6.89511,6.90215,6.90015,6.89415,6.88365,6.87198,6.86917,6.86321,6.86087,6.86099,6.85727,6.84912,6.84697,6.84248,6.84417,6.83663,6.84409,6.83547,6.83345,6.8321,6.83405,6.82717,6.83049,6.82585,6.83361,6.81931,6.81754],"off_diag_covariance":[0.16602,0.12207,0.12109,0.0918,0.10693,0.10938,0.10644,0.11719,0.10644,0.09082,0.10303,0.09814,0.13281,0.11133,0.10596,0.12354,0.1084,0.07471,0.09717,0.09912,0.0874,0.10986,0.1084,0.0708,0.10791,0.09521,0.09131,0.08594]},"end":{"gain_pct":42.6,"l1_loss":0.05106,"baseline_l1_loss":0.08895,"variance":0.30889,"teacher_variance":0.32116,"dino_entropy":6.81661,"off_diag_covariance":0.09473}},"no_motion":{"traj":{"step":[0,24,48,72,84,108,132,156,180,204,228,240,264,288,312,336,360,372,396,420,444,468,492,516,528,552,576,599],"gain_pct":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"l1_loss":[0.12787,0.18069,0.15853,0.14901,0.14254,0.10504,0.10046,0.10866,0.11407,0.13546,0.09279,0.11793,0.09226,0.07915,0.09082,0.07827,0.07208,0.04126,0.0711,0.06785,0.03936,0.05824,0.07581,0.04586,0.07924,0.06412,0.07484,0.06333],"baseline_l1_loss":[0.12787,0.18069,0.15853,0.14901,0.14254,0.10504,0.10046,0.10866,0.11407,0.13546,0.09279,0.11793,0.09226,0.07915,0.09082,0.07827,0.07208,0.04126,0.0711,0.06785,0.03936,0.05824,0.07581,0.04586,0.07924,0.06412,0.07484,0.06333],"variance":[0.64621,0.55885,0.5932,0.42616,0.53427,0.54983,0.48882,0.53422,0.53836,0.40986,0.48178,0.40016,0.57315,0.47932,0.48073,0.53832,0.46576,0.30556,0.42687,0.43643,0.36465,0.46474,0.50217,0.28159,0.46844,0.41091,0.40298,0.36238],"teacher_variance":[0.64997,0.59305,0.62067,0.47833,0.59218,0.60601,0.47635,0.5485,0.53824,0.40402,0.47714,0.4328,0.58826,0.52547,0.50348,0.53879,0.49345,0.31559,0.45374,0.47233,0.37883,0.4907,0.51532,0.2987,0.49825,0.42713,0.41972,0.37655],"dino_entropy":[6.811,6.89007,6.88581,6.88287,6.87079,6.86253,6.87387,6.85878,6.85828,6.86009,6.84971,6.85574,6.8397,6.84251,6.8462,6.8342,6.83699,6.85707,6.8388,6.83376,6.83554,6.82571,6.82645,6.84399,6.81321,6.82578,6.82526,6.81925],"off_diag_covariance":[0.16602,0.17285,0.17773,0.12793,0.15918,0.16504,0.15039,0.16211,0.16309,0.12891,0.14453,0.12158,0.17871,0.14551,0.14648,0.16406,0.14355,0.0957,0.12598,0.12988,0.11133,0.14551,0.15234,0.08887,0.14746,0.125,0.11963,0.11426]},"end":{"gain_pct":0.0,"l1_loss":0.05299,"baseline_l1_loss":0.05299,"variance":0.37993,"teacher_variance":0.39548,"dino_entropy":6.82025,"off_diag_covariance":0.12256}},"no_mse":{"traj":{"step":[0,24,48,72,84,108,132,156,180,204,228,240,264,288,312,336,360,372,396,420,444,468,492,516,528,552,576,599],"gain_pct":[-291.86,-32.9,-40.99,-45.03,-45.77,-83.37,-92.59,-102.46,-118.65,-144.12,-164.15,-163.88,-191.21,-227.42,-258.15,-268.37,-264.55,-380.71,-324.9,-327.28,-271.82,-424.35,-315.31,-521.41,-313.59,-385.52,-347.98,-402.53],"l1_loss":[0.50108,0.72187,0.6192,0.54937,0.52325,0.43821,0.41697,0.41604,0.40693,0.40651,0.3961,0.40177,0.39436,0.38696,0.39379,0.38642,0.40087,0.38047,0.39339,0.38928,0.39803,0.37763,0.38636,0.3696,0.38317,0.37061,0.37459,0.36446],"baseline_l1_loss":[0.12787,0.54318,0.43918,0.3788,0.35894,0.23897,0.21651,0.20549,0.18611,0.16652,0.14995,0.15226,0.13542,0.11819,0.10995,0.1049,0.10996,0.07915,0.09258,0.09111,0.10705,0.07202,0.09303,0.05948,0.09265,0.07633,0.08362,0.07252],"variance":[0.64621,0.3179,0.44557,0.33664,0.3968,0.39456,0.29932,0.3374,0.30874,0.2641,0.31532,0.24932,0.31976,0.27611,0.27159,0.28509,0.2346,0.16452,0.20167,0.23303,0.26038,0.24355,0.25574,0.14911,0.26006,0.22617,0.21819,0.19732],"teacher_variance":[0.64997,0.46892,0.39399,0.27651,0.37944,0.3889,0.30483,0.3559,0.35079,0.26016,0.31675,0.27705,0.38327,0.31945,0.30881,0.31345,0.25755,0.18137,0.22708,0.26655,0.28462,0.27014,0.27179,0.16198,0.28393,0.24264,0.22656,0.20831],"dino_entropy":[6.80643,6.90479,6.89936,6.89885,6.88809,6.87872,6.88851,6.87253,6.86904,6.87585,6.85181,6.86404,6.84235,6.84584,6.84805,6.83097,6.83687,6.86187,6.84883,6.82406,6.8093,6.80333,6.80171,6.84376,6.78493,6.79216,6.80553,6.80749],"off_diag_covariance":[0.16602,0.12451,0.1748,0.12988,0.14844,0.15234,0.11475,0.12891,0.11865,0.10205,0.11768,0.0918,0.12109,0.10449,0.104,0.10742,0.08594,0.0625,0.07715,0.08545,0.09766,0.09033,0.09424,0.05615,0.09619,0.08252,0.07812,0.07275]},"end":{"gain_pct":-447.01,"l1_loss":0.36086,"baseline_l1_loss":0.06597,"variance":0.2285,"teacher_variance":0.23458,"dino_entropy":6.80749,"off_diag_covariance":0.0835}}}"""
     FROZEN = json.loads(_FROZEN_JSON)
     END = {arm: FROZEN[arm]["end"] for arm in FROZEN}

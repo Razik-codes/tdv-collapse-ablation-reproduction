@@ -83,14 +83,14 @@ Left: the motion-composed prediction error (solid) drops below the identity base
 
 All arms run the identical fixed command `bash job_scripts/pretrain_tdv_local_smoketest.sh` (local backend, RTX 3050 Ti) and differ only in committed code/config.
 
-| Arm | Branch (runnable code + fixed config) | Change vs control |
+| Arm | Public selector | Change vs control |
 |---|---|---|
-| Full TDV control | [`experiment/full-tdv-control-faithful-low-rank-motion-data-r`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/full-tdv-control-faithful-low-rank-motion-data-r) | — |
-| − Motion encoder | [`experiment/ablation-remove-motion-encoder-faithful-data-rou`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/ablation-remove-motion-encoder-faithful-data-rou) | `+ --remove_motion_encoder` |
-| − MSE loss | [`experiment/ablation-remove-mse-loss-faithful-data-round-2`](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/ablation-remove-mse-loss-faithful-data-round-2) | remove `--use_mse_loss` |
+| Full TDV control | `TDV_ARM=full` | — |
+| − Motion encoder | `TDV_ARM=no-motion` | `+ --remove_motion_encoder` |
+| − MSE loss | `TDV_ARM=no-mse` | remove `--use_mse_loss` |
 
-Supporting branches: the collapse-metric plumbing (`--log_var_covar`, opt-in `--print_metrics_to_stdout`, 600-step schedule) lives on the [round-1 control](https://github.com/Razik-codes/tdv-collapse-ablation-reproduction/tree/experiment/full-tdv-control-collapse-metrics-logged-table-4); the `testsrc2` round-1 arms document the negative-control lineage.
+The public harness consolidates the three recorded configurations. Its round-1 `testsrc2` negative control and the collapse-metric plumbing (`--log_var_covar`, opt-in `--print_metrics_to_stdout`, 600-step schedule) are documented here for methodological lineage.
 
 **Compute cost.** Round 2: 3 runs × ~7 min = ~21 min on one RTX 3050 Ti (4 GB); whole project (incl. round-1 arms) ≈ 1 GPU-hour. The tutorial's optional GPU lab (DINOv2 ViT-S Δz sweep) is a separate teaching demo, validated on CUDA (RTX 3050 Ti: 576-image sweep in 1.7 s, 419 MB peak).
 
-*Reproduction driven through `experiment`; internal run IDs are recorded in the experiment tree (`experiment exp desc`), not here.*
+*The reported measurements are preserved in this artifact; no internal run-service metadata is required to inspect them.*

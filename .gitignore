@@ -135,6 +135,13 @@ pretrained_models/*
 core.*
 core*
 wandb
+smoke_data/
+
+# Credentials and local secrets
+.env.*
+!.env.example
+*.pem
+*.key
 
 
 lightning_logs/

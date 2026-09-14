@@ -1,10 +1,10 @@
 # Source and third-party notices
 
-This repository combines an independent reproduction artifact with the original TDV research code and adapted third-party implementations. This file makes that lineage explicit; it does not replace the license files distributed with each component.
+This repository combines an independent reproduction artifact with the original TDV research code and adapted third-party implementations. This file makes that lineage explicit; it does not replace the license files distributed with each component. The root [Apache-2.0 license](LICENSE) applies to the repository owner's original additions only; bundled components retain the licenses noted below.
 
 ## Reproduction artifact
 
-The repository-level additions centered on [`claim_tutorial.py`](claim_tutorial.py) and [`reports/collapse-ablation/`](reports/collapse-ablation/) reproduce one ablation from the TDV paper at reduced scale. Their experimental substitutions, branch lineage, compute budget, and limitations are documented in the report.
+The repository-level additions centered on [`claim_tutorial.py`](claim_tutorial.py), [`reports/collapse-ablation/`](reports/collapse-ablation/), and the synthetic-data reproduction harness reproduce one ablation from the TDV paper at reduced scale. Their experimental substitutions, branch lineage, compute budget, and limitations are documented in the report. See [`CONTRIBUTIONS.md`](CONTRIBUTIONS.md) for a precise summary of the repository owner's work.
 
 ## Original TDV project
 
